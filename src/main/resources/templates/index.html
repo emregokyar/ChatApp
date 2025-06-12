@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/styles.min.css}"/></head>
+<body>
+
+<div class="container col-xl-10 col-xxl-8 px-4 py-5" id="main">
+    <div class="row align-items-center g-lg-5 py-5">
+        <div class="col-md-10 mx-auto col-lg-5">
+            <!--Error Message if email exists-->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+
+            <!--Login Form-->
+            <form id="login-form" class="p-4 p-md-5 border rounded-3 bg-body-tertiary" th:action="@{/login}" th:object="${user}" method="POST">
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="floatingInput1" placeholder="name@example.com" name="email" required>
+                    <label for="floatingInput1">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="floatingPassword2" placeholder="Password">
+                    <label for="floatingPassword2">Password</label>
+                </div>
+                <div class="checkbox mb-3">
+                    <label><input type="checkbox" value="remember-me"> Remember me</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+                <hr class="my-4">
+                <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
