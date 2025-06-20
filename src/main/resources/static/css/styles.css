@@ -1,3 +1,45 @@
 #main{
     background-color: #FCF5EB;
 }
+
+.sign-in{
+    background-color: #008069;
+    border-color: #008069;
+}
+
+#dow-button{
+    background-color: #25D366;
+    border-color: black ;
+    color: black;
+}
+
+ #dow-button:hover {
+    background-color: black !important ;
+    color: white;
+}
+
+#email-form , #login-form , #info-card, #phone-form{
+    border-color: black !important;
+}
+
+#next-button{
+    border-color: #008069;
+}
+
+.sign-in:hover {
+    background-color: #016c58 !important ;
+    border-color: #016c58 !important;
+}
+
+.custom-switch:checked {
+    background-color: black;
+    border-color: black;
+}
+
+.custom-switch:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25);
+}
+
+.num{
+    border-color: black ;
+}

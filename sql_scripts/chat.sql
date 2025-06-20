@@ -1,29 +1,45 @@
+DROP DATABASE IF EXISTS wp_clone;
 CREATE DATABASE wp_clone;
 USE wp_clone;
 
 CREATE TABLE users(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	email VARCHAR(49) UNIQUE NOT NULL,
-    password VARCHAR(49) NOT NULL,
+	username VARCHAR(49) UNIQUE NOT NULL,
+	registration_type ENUM('PHONE', 'EMAIL') NOT NULL,
     firstname VARCHAR(49) DEFAULT NULL,
     lastname VARCHAR(49) DEFAULT NULL,
     profile_photo VARCHAR(255) DEFAULT NULL,
 	registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	is_private BOOLEAN NOT NULL DEFAULT FALSE
-);	
+);
+
+CREATE TABLE login_tokens(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+	token VARCHAR(49) NOT NULL,
+	expiration_date TIMESTAMP NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
 
 CREATE TABLE channels(
 	id INT UNIQUE PRIMARY KEY,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE group_roles(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role ENUM('ADMIN', 'REGULAR') NOT NULL UNIQUE
+);
+
+-- Give a role to user in the registered channel
 CREATE TABLE registered_channels(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    type ENUM('ADMIN', 'REGULAR') DEFAULT 'REGULAR',
 	user_id INT NOT NULL,
     channel_id INT NOT NULL,
+    role_id INT NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(channel_id) REFERENCES channels(id)
+    FOREIGN KEY(channel_id) REFERENCES channels(id),
+    FOREIGN KEY(role_id) REFERENCES group_roles(id)
 );
 
 CREATE TABLE messages(

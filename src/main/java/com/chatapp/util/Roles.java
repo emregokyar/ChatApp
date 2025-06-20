@@ -1,5 +1,5 @@
 package com.chatapp.util;
 
-public enum UserType {
+public enum Roles {
     REGULAR, ADMIN
 }

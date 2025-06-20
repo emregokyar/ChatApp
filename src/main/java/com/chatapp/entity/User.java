@@ -1,5 +1,6 @@
 package com.chatapp.entity;
 
+import com.chatapp.util.LoginOptions;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,8 +21,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String email;
-    private String password;
+    private String username;
+
+    @Enumerated(EnumType.STRING)
+    private LoginOptions registrationType;
     private String firstname;
     private String lastname;
     private String profilePhoto;
@@ -29,6 +32,10 @@ public class User {
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date registrationDate;
     private Boolean isPrivate;
+
+    @OneToMany(targetEntity = LoginToken.class, mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<LoginToken> loginTokens;
 
     @OneToMany(targetEntity = RegisteredChannel.class, mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JsonManagedReference
