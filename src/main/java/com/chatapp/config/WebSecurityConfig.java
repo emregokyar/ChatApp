@@ -20,12 +20,17 @@ public class WebSecurityConfig {
             "/",
             "/resources/**",
             "/static/**",
+            "/assets/**",
+            "/*.jpg",
             "/js/**",
             "/css/**",
             "/*.css",
             "/*.js",
             "/error",
-            "/send-ott"
+            "/login",
+            "/signUp",
+            "/register",
+            "/activate"
     };
 
     @Autowired
@@ -48,8 +53,8 @@ public class WebSecurityConfig {
                 .oneTimeTokenLogin(ott -> {
                     ott.tokenGenerationSuccessHandler(tokenGenerationSuccessHandler);
                     ott.showDefaultSubmitPage(true);
-                    ott.tokenGeneratingUrl("/create");
-                    ott.loginPage("/");
+                    ott.tokenGeneratingUrl("/create-ott");
+                    ott.loginPage("/login");
                     ott.successHandler(customAuthenticationSuccessHandler);
                     ott.tokenService(customOttService);
                 })

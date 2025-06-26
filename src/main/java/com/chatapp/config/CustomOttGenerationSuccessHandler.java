@@ -1,7 +1,11 @@
 package com.chatapp.config;
 
+import com.chatapp.entity.User;
 import com.chatapp.service.CustomUserDetailService;
 import com.chatapp.service.MailService;
+import com.chatapp.service.SmsService;
+import com.chatapp.service.UserService;
+import com.chatapp.util.LoginOptions;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,37 +18,60 @@ import org.springframework.security.web.authentication.ott.RedirectOneTimeTokenG
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class CustomOttGenerationSuccessHandler implements OneTimeTokenGenerationSuccessHandler {
     private final MailService mailService;
     private final CustomUserDetailService userDetailService;
+    private final SmsService smsService;
+    private final UserService userService;
     //Creating custom redirect page after a user sends an email - in my case, I am redirecting index page
-    private final OneTimeTokenGenerationSuccessHandler redirectHandler = new RedirectOneTimeTokenGenerationSuccessHandler("/");
+    private final OneTimeTokenGenerationSuccessHandler redirectHandler = new RedirectOneTimeTokenGenerationSuccessHandler("/login");
 
     @Autowired
-    public CustomOttGenerationSuccessHandler(MailService mailService, CustomUserDetailService userDetailService) {
+    public CustomOttGenerationSuccessHandler(MailService mailService, CustomUserDetailService userDetailService, SmsService smsService, UserService userService) {
         this.mailService = mailService;
         this.userDetailService = userDetailService;
+        this.smsService = smsService;
+        this.userService = userService;
     }
 
-    //Here, the link can be built and send the link to the user email directly
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, OneTimeToken oneTimeToken)
             throws IOException, ServletException {
-        //Send the ott to user
+        if (!isUserActive(oneTimeToken.getUsername())) return;
+
         try {
-            String email = getUserEmail(oneTimeToken.getUsername());
-            mailService.sendPassword(email, oneTimeToken.getTokenValue());
+            String username = getUsername(oneTimeToken.getUsername());
+
+            if (getUserRegistrationType(username) == LoginOptions.EMAIL) {
+                mailService.sendPassword(username, oneTimeToken.getTokenValue());
+            } else if (getUserRegistrationType(username) == LoginOptions.PHONE) {
+                smsService.sendLoginSms(username, oneTimeToken.getTokenValue());
+            }
         } catch (MessagingException e) {
             throw new RuntimeException("There was an error while sending otp to user: " + e);
         }
         redirectHandler.handle(request, response, oneTimeToken);
     }
 
-    //Retrieving the user from DB
-    private String getUserEmail(String username) {
+    private String getUsername(String username) {
         UserDetails userDetails = userDetailService.loadUserByUsername(username);
         return userDetails.getUsername();
+    }
+
+    private LoginOptions getUserRegistrationType(String username) {
+        Optional<User> user = userService.findByEmailOrPhone(username);
+        return user.map(User::getRegistrationType).orElse(null);
+    }
+
+    private boolean isUserActive(String username) {
+        Optional<User> user = userService.findByEmailOrPhone(username);
+        boolean isActive = false;
+        if (user.isPresent()) {
+            isActive = user.get().getIsActive();
+        }
+        return isActive;
     }
 }

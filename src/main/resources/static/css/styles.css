@@ -13,12 +13,12 @@
     color: black;
 }
 
- #dow-button:hover {
+#dow-button:hover, .logs:hover {
     background-color: black !important ;
-    color: white;
+    color: white !important;
 }
 
-#email-form , #login-form , #info-card, #phone-form{
+#email-form , #login-form , #info-card, #phone-form, .num{
     border-color: black !important;
 }
 
@@ -40,6 +40,23 @@
     box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25);
 }
 
-.num{
-    border-color: black ;
+#people{
+    width: 1700px;
+    height: 800px;
+    object-fit: cover;
+}
+
+#pic{
+    background-image: url("/assets/pexels-ron-lach-9212887.jpg");
+    width: 1700px;
+    height: 800px;
+    object-fit: cover;
+}
+
+.iti {
+    width: 40%;
+}
+
+.form-control {
+    height: 58px;
 }

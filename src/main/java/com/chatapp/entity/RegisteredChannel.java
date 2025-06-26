@@ -29,5 +29,4 @@ public class RegisteredChannel {
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     @JsonBackReference
     private GroupRole role;
-
 }

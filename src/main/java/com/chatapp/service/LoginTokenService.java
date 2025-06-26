@@ -16,7 +16,7 @@ public class LoginTokenService implements OneTimeTokenService {
     private final LoginTokenRepository loginTokenRepository;
     private final OttExtrasService ottExtrasService;
     private final UserService userService;
-    private final long expiryInterval = 5L * 60 * 1000;
+    private static final long expiryInterval = 5L * 60 * 1000;
 
     @Autowired
     public LoginTokenService(LoginTokenRepository loginTokenRepository, OttExtrasService ottExtrasService, UserService userService) {

@@ -32,6 +32,8 @@ public class User {
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date registrationDate;
     private Boolean isPrivate;
+    private Boolean isActive;
+    private String activationNumber;
 
     @OneToMany(targetEntity = LoginToken.class, mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference

@@ -15,29 +15,25 @@ nextButton.click(function (event) {
     switchVal.addClass("d-none");
 
     if (!emailForm.hasClass("d-none")) {
-        userInfo.val(email.val().trim());
         event.preventDefault();
-        fetch('/register', {
+        fetch('/create-ott', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                login_option: 'EMAIL',
-                username: userInfo.val()
+                username: email.val().trim()
             })
         });
     }else{
-        userInfo.val(iti.getNumber());
         event.preventDefault();
-        fetch('/register', {
+            fetch('/create-ott', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                login_option: 'PHONE',
-                username: userInfo.val()
+                username: iti.getNumber()
             })
         });
     }
