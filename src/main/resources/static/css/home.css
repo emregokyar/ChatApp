@@ -1,0 +1,54 @@
+body{
+    background-color: #eae6df	;
+}
+
+#upper-part{
+    background-color: #00A884;
+    position: fixed;
+}
+
+#chat-area{
+    background-image: url("/assets/screen.png");
+    height: 943px;
+}
+
+.sender {
+    text-align: right;
+}
+
+.receiver {
+    text-align: left;
+}
+
+.sender .message {
+    display: inline-block;
+    background: #dcf8c6;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 15px 15px 0 15px;
+    max-width: 50%;
+}
+
+.receiver .message {
+    display: inline-block;
+    background: #f1f0f0;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 15px 15px 15px 0;
+    max-width: 50%;
+}
+
+.custom-checkbox:checked {
+    background-color: #00A884;
+    border-color: #00A884;
+}
+
+.custom-checkbox:checked::after {
+    box-shadow: none;
+}
+
+.custom-checkbox:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #00A884;
+}
