@@ -10,10 +10,10 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithCustomMockUserSecurityContextFactory.class)
 public @interface WithCustomMockUser {
     int id() default 1;
-    String username() default "emre";
+    String username() default "emregokyar1940@gmail.com";
     LoginOptions registrationType() default LoginOptions.EMAIL;
-    String firstname() default "Emre";
-    String lastname() default "Gokyar";
+    String fullName() default "Emre Gokyar";
     boolean isActive() default true;
     String activationNumber() default "12345678";
+    String about() default "Hey there I'm using whatsapp clone";
 }

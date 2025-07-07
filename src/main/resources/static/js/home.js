@@ -124,14 +124,53 @@ profileButton.click(function () {
 });
 
 //Change profile photo when user is selected
-const fileInput = document.getElementById('fileInput');
+const fileInput = document.getElementById('fileInput'); //This is a hidden input
 const profileImage = document.getElementById('profileImage');
 
 fileInput.addEventListener('change', function () {
     const file = this.files[0];
     if (file) {
         profileImage.src = URL.createObjectURL(file);
+        $("#camera-icon").addClass("d-none");
+        $("#send-icon").removeClass("d-none");
     }
+});
+
+//CSRF calls to not changing the page when user is clicked the forms
+document.getElementById("upload-photo-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch('/updateProfilePhoto', {
+      method: 'POST',
+      body: formData
+    });
+
+    $("#camera-icon").removeClass("d-none");
+    $("#send-icon").addClass("d-none");
+});
+
+document.getElementById("update-full-name-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch('/updateFullName', {
+      method: 'POST',
+      body: formData
+    });
+});
+
+document.getElementById("update-about-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch('/updateAbout', {
+      method: 'POST',
+      body: formData
+    });
 });
 
 //Back to settings page from privacy settings
@@ -459,4 +498,4 @@ let backMainButton = $("#back-main-button");
 backMainButton.click(function () {
     $("#new-chat-area").toggleClass("d-none");
     allUsers.toggleClass("d-none");
-})
+});

@@ -210,4 +210,20 @@ public class UserServiceTests {
         Assertions.assertNull(userService.getCurrentUser());
         SecurityContextHolder.clearContext();
     }
+
+    @Test
+    void testForUpdatingUser() {
+        String username = "testuser@gmail.com";
+        User user = User.builder()
+                .id(2)
+                .username(username)
+                .isActive(true)
+                .isPrivate(false)
+                .registrationType(LoginOptions.EMAIL)
+                .build();
+
+        Mockito.when(userRepositoryMock.save(user))
+                .thenReturn(user);
+        Assertions.assertNotNull(userService.updateUser(user));
+    }
 }

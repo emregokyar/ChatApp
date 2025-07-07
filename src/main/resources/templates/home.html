@@ -187,10 +187,16 @@
                 <div class="d-flex">
                     <p>Private Account</p>
                 </div>
-                <form action="">
-                    <input type="checkbox" name="" id="" style="width: 30px;" class="checkbox-success">
+                <form th:action="@{/changePrivacy}" method="POST">
+                    <input type="checkbox" name="privacy" style="width: 30px;" class="checkbox-success" th:checked="${currentUser.isPrivate}">
+                    <button type="submit" class="btn border-0 rounded-circle" id="change-privacy-submit-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                        </svg>
+                    </button>
                 </form>
             </div>
+
         </div>
 
 
@@ -247,10 +253,10 @@
 
             <!--Profile Photo-->
             <div class="d-flex justify-content-center mb-5" style="background-color: #F0F2F5;">
-                <form action="" class="position-relative mt-5">
+                <form th:action="@{/updateProfilePhoto}" class="position-relative mt-5" id="upload-photo-form" method="POST" enctype="multipart/form-data">
                     <!-- Profile Photo Container -->
                     <div class="position-relative" style="width: 12rem; height: 12rem;">
-                        <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="Profile Photo"
+                        <img th:src="@{${currentUser.profilePhotoPath} ?: '/assets/person-circle.svg'}" alt="Profile Photo"
                              id="profileImage"
                              class="rounded-circle"
                              style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
@@ -258,22 +264,27 @@
                         <!-- Camera Icon -->
                         <div class="position-absolute bottom-0 end-0">
                             <label for="fileInput" class="btn btn-light shadow rounded-circle p-1" style="cursor: pointer; width: 2rem; height: 2rem;">
-                                <i class="fas fa-camera"></i>
+                                <i class="fas fa-camera" id="camera-icon"></i>
+                                <button type="submit" class="d-none border-0" id="send-icon" style="background-color: transparent;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" class="bi bi-send-fill" viewBox="0 0 16 16" style="background-color: transparent; margin-right: 3px;">
+                                        <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+                                    </svg>
+                                </button>
                             </label>
                         </div>
                     </div>
 
                     <!-- Hidden File Input -->
-                    <input type="file" id="fileInput" name="user-photo" accept="image/*" class="d-none">
+                    <input type="file" id="fileInput" name="profilePhoto" accept="image/*" hidden>
                 </form>
             </div>
 
             <!--Name and User Info-->
             <div>
                 <div class="mb-3" style="background-color: white;">
-                    <form action="">
-                        <label for="input-1" class="form-label mx-3 mt-2 mb-3" style="color: #00A884;">Your name</label>
-                        <input type="email" class="form-control border-0 border-bottom mx-2" id="input-1" placeholder="Name" style=" outline: none; box-shadow: none;">
+                    <form th:action="@{/updateFullName}" method="POST" id="update-full-name-form">
+                        <label for="input-1" class="form-label mx-3 mt-2 mb-3" style="color: #00A884;" >Your name</label>
+                        <input name="fullName" type="text" class="form-control border-0 border-bottom mx-2" id="input-1" style=" outline: none; box-shadow: none;" th:placeholder="${currentUser.fullName} ?: 'Name'">
                     </form>
                 </div>
 
@@ -282,9 +293,9 @@
                 </div>
 
                 <div class="mb-3" style="background-color: white;">
-                    <form action="">
+                    <form th:action="@{/updateAbout}" method="POST" id="update-about-form">
                         <label for="input-11" class="form-label mx-3 mt-2 mb-3" style="color: #00A884;">About</label>
-                        <input type="email" class="form-control border-0 border-bottom mx-2" id="input-11" placeholder="Hey there! I am using WhatsApp Clone." style=" outline: none; box-shadow: none;">
+                        <input name="about" type="text" class="form-control border-0 border-bottom mx-2" id="input-11" th:placeholder="${currentUser.about} ?: 'Hey there! I am using WhatsApp Clone.'" style=" outline: none; box-shadow: none;">
                     </form>
                 </div>
             </div>

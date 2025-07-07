@@ -12,13 +12,13 @@ public class WithCustomMockUserSecurityContextFactory implements WithSecurityCon
     @Override
     public SecurityContext createSecurityContext(WithCustomMockUser annotation) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        User user = new User();
-        user.setId(annotation.id());
-        user.setUsername(annotation.username());
-        user.setRegistrationType(annotation.registrationType());
-        user.setFirstname(annotation.firstname());
-        user.setLastname(annotation.lastname());
-        user.setIsActive(annotation.isActive());
+        User user = User.builder().id(annotation.id())
+                .username(annotation.username())
+                .registrationType(annotation.registrationType())
+                .fullName(annotation.fullName())
+                .isActive(annotation.isActive())
+                .about(annotation.about())
+                .build();
         if (!annotation.isActive()) user.setActivationNumber(annotation.activationNumber());
         else user.setActivationNumber(null);
 
