@@ -226,4 +226,29 @@ public class UserServiceTests {
                 .thenReturn(user);
         Assertions.assertNotNull(userService.updateUser(user));
     }
+
+    @Test
+    void testFindByUserId() {
+        User user = User.builder()
+                .id(1)
+                .username("user")
+                .build();
+        Mockito.when(userRepositoryMock.findById(user.getId()))
+                .thenReturn(Optional.of(user));
+        Optional<User> byUserId = userService.findByUserId(1);
+        Assertions.assertEquals(byUserId.get(), user);
+    }
+
+    @Test
+    void testFailTestFindById() {
+        User user = User.builder()
+                .id(2)
+                .username("user")
+                .build();
+        Mockito.when(userRepositoryMock.findById(user.getId()))
+                .thenReturn(Optional.of(user));
+
+        Optional<User> byUserId = userService.findByUserId(1);
+        Assertions.assertEquals(byUserId, Optional.empty());
+    }
 }

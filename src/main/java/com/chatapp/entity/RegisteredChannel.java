@@ -11,8 +11,10 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
 public class RegisteredChannel {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne

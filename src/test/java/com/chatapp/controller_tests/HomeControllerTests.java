@@ -2,7 +2,9 @@ package com.chatapp.controller_tests;
 
 import com.chatapp.ChatAppApplication;
 import com.chatapp.controller.HomeController;
+import com.chatapp.entity.Contact;
 import com.chatapp.entity.User;
+import com.chatapp.service.ContactService;
 import com.chatapp.service.RegisteredChannelService;
 import com.chatapp.service.SmsService;
 import com.chatapp.service.UserService;
@@ -20,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -30,6 +33,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest(classes = {ChatAppApplication.class, HomeController.class})
 @AutoConfigureMockMvc
@@ -43,7 +48,10 @@ public class HomeControllerTests {
     private RegisteredChannelService registeredChannelServiceMock;
 
     @MockitoBean
-    private SmsService smsService;
+    private SmsService smsServiceMock;
+
+    @MockitoBean
+    private ContactService contactServiceMock;
 
     @Autowired
     private MockMvc mockMvc;
@@ -76,15 +84,39 @@ public class HomeControllerTests {
     }
 
     @Test
+    @WithAnonymousUser
+    void testForAnonymousUser() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/home"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+    }
+
+    @Test
     @WithCustomMockUser
     void testForGetHomePage() throws Exception {
         Mockito.when(userServiceMock.getCurrentUser())
                 .thenReturn(mockUser);
 
+        User dummyUser = User.builder()
+                .username("dummy@gmail.com")
+                .isActive(true)
+                .registrationType(LoginOptions.EMAIL)
+                .build();
+        Contact contact = Contact.builder()
+                .contacter(mockUser)
+                .contacting(dummyUser)
+                .nickname("my dummy user")
+                .build();
+
+        Optional<List<Contact>> contacts = Optional.of(List.of(contact));
+
+        Mockito.when(contactServiceMock.getAllContacts(mockUser.getId()))
+                .thenReturn(contacts);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/home"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("home"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("currentUser"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("contacts"))
                 .andExpect(MockMvcResultMatchers.model().attribute("currentUser", mockUser));
     }
 
@@ -188,6 +220,34 @@ public class HomeControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/updateProfilePhoto")
                         .file(photo)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    void successTestForChangingPrivacy() throws Exception {
+        Mockito.when(userServiceMock.getCurrentUser()).thenReturn(mockUser);
+        Mockito.when(userServiceMock.updateUser(mockUser)).thenReturn(mockUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/changePrivacy")
+                        .param("privacy", "true")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username", Matchers.is("emregokyar1940@gmail.com")));
+    }
+
+    @Test
+    @WithCustomMockUser
+    void failTestForChangingPrivacy() throws Exception {
+        User invalidUser = User.builder()
+                .username("invalidUsername")
+                .build();
+        Mockito.when(userServiceMock.getCurrentUser()).thenReturn(invalidUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/changePrivacy")
+                        .param("privacy", "true")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 }

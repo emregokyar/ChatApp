@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
 public class GroupRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

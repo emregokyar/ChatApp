@@ -44,7 +44,7 @@
                         </svg>
                     </a>
                     <a id="profile-button"  class="d-flex align-items-center justify-content-center p-3 link-body-emphasis text-decoration-none" aria-expanded="false">
-                        <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="mdo" width="30" height="30" class="rounded-circle border" style="object-fit: cover;">
+                        <img th:src="@{${currentUser.profilePhotoPath} ?: '/assets/person-circle.svg'}" alt="mdo" width="30" height="30" class="rounded-circle border" style="object-fit: cover;">
                     </a>
                 </div>
             </div>
@@ -78,7 +78,7 @@
                             </button>
                             <ul class="dropdown-menu text-small z-4 rounded-0">
                                 <li>
-                                    <a class="dropdown-item rounded-0" href="#">Log out</a>
+                                    <a class="dropdown-item rounded-0" th:href="@{/logout}">Log out</a>
                                 </li>
                             </ul>
                         </div>
@@ -102,7 +102,7 @@
 
             <!--Chatted People List-->
             <div class="list-group list-group-flush border-bottom scrollarea" style="max-height: 55rem; overflow-y: auto; overflow-x: hidden;">
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm single-user" aria-current="true" style="width: 30rem;">
+                <a class="list-group-item list-group-item-action py-3 lh-sm single-user" aria-current="true" style="width: 30rem;">
                     <div class="d-flex">
                         <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
                         <div style="width: 100%;">
@@ -128,11 +128,11 @@
             <!--Profile Photo-->
             <div class="d-flex mt-3 mx-3 mb-4 ">
                 <div class="position-relative" style="width: 6rem; height: 6rem;">
-                    <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="Profile Photo" id="profileImage1" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
+                    <img th:src="@{${currentUser.profilePhotoPath} ?: '/assets/person-circle.svg'}" alt="Profile Photo" id="profileImage1" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
                 </div>
                 <div class="mt-4 mx-3">
-                    <p class="mb-0">Emre Gokyar</p>
-                    <p style="color: #54656f;">Hey there! I am using WhatsApp Clone.</p>
+                    <p class="mb-0" th:text="${currentUser.fullName} ?: 'Name'">Name</p>
+                    <p style="color: #54656f;" th:text="${currentUser.about} ?: 'Hey there! I am using WhatsApp Clone.'"></p>
                 </div>
             </div>
 
@@ -162,8 +162,8 @@
                         <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
                     </svg>
                     <button class="btn border-0">
-                        <a href="" class="text-decoration-none">
-                            <p class="mx-3" style="color: red;">Logout</p>
+                        <a th:href="@{/logout}" class="text-decoration-none">
+                            <p class="mx-3" style="color: red;">Log out</p>
                         </a>
                     </button>
                 </div>
@@ -187,9 +187,9 @@
                 <div class="d-flex">
                     <p>Private Account</p>
                 </div>
-                <form th:action="@{/changePrivacy}" method="POST">
-                    <input type="checkbox" name="privacy" style="width: 30px;" class="checkbox-success" th:checked="${currentUser.isPrivate}">
-                    <button type="submit" class="btn border-0 rounded-circle" id="change-privacy-submit-button">
+                <form th:action="@{/changePrivacy}" method="POST" id="change-privacy-form">
+                    <input type="checkbox" name="privacy" style="width: 30px;" class="checkbox-success" th:checked="${currentUser.isPrivate}" id="privacy-checkbox">
+                    <button type="submit" class="btn border-0 rounded-circle mb-2 d-none" id="change-privacy-submit-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
                             <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
                         </svg>
@@ -365,14 +365,15 @@
 
                 <!-- All the Contacts that user has -->
                 <div class="list-group list-group-flush border-bottom scrollarea" style="max-height: 660px; overflow-y: auto; overflow-x: hidden;">
-                    <a href="#" class="list-group-item list-group-item-action py-3 lh-sm searched-user" aria-current="true" style="width: 30rem;">
+                    <a class="list-group-item list-group-item-action py-3 lh-sm searched-user" aria-current="true" style="width: 30rem;" th:each="contact : ${contacts}">
                         <div class="d-flex">
-                            <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
+                            <!--th:id="'userId-' + ${contact.contacting.id}"-->
+                            <img th:src="@{${contact.contacting.profilePhotoPath} ?: '/assets/person-circle.svg'}" alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
                             <div style="width: 100%;">
                                 <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <strong class="mb-1 text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Emre Gokyar</strong>
+                                    <strong class="mb-1 text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" th:text="${contact.nickname} ?: ${contact.contacting.username}"></strong>
                                 </div>
-                                <div class="small text-truncate" style="max-width: 22rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Some placeholder content in a paragraph below</div>
+                                <div class="small text-truncate" style="max-width: 22rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" th:text="${contact.contacting.about} ?: 'Hello, I am using WhatsApp Clone!'"></div>
                             </div>
                         </div>
                     </a>
@@ -394,14 +395,14 @@
                 </div>
 
                 <!-- Phone Form To Add New User-->
-                <form action="" id="new-contact-phone-form">
+                <form th:action="@{/addNewContact}" id="new-contact-phone-form" method="POST">
                     <div class="input-group mb-3 mt-5 container">
                             <span class="input-group-text border-0" id="basic-addon11" style="background-color: white !important;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" class="bi bi-person-fill" viewBox="0 0 16 16">
                                     <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
                                 </svg>
                             </span>
-                        <input type="text" class="form-control border-0 border-bottom rounded-0" placeholder="Full name" aria-label="fullname" aria-describedby="basic-addon11" style=" outline: none; box-shadow: none;">
+                        <input id="phone-nickname-input" name="nickname" type="text" class="form-control border-0 border-bottom rounded-0" placeholder="Full name" aria-label="fullname" aria-describedby="basic-addon11" style=" outline: none; box-shadow: none;">
                     </div>
 
                     <div class="input-group mb-3 mt-5 container">
@@ -410,21 +411,21 @@
                                     <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
                                 </svg>
                             </span>
-                        <input id="phone-input" type="tel" class="form-control border-0 border-bottom rounded-0" aria-label="phone" aria-describedby="basic-addon12" style=" outline: none; box-shadow: none; width: 25rem;">
+                        <input id="phone-input" type="tel" class="form-control border-0 border-bottom rounded-0" aria-label="phone" aria-describedby="basic-addon12" style=" outline: none; box-shadow: none; width: 25rem;" name="username">
                     </div>
 
                     <button class="w-20 btn btn-primary rounded-5 mt-5 mx-3" style="font-size: 1rem; background-color: #00A884; border-color: #00A884;" type="submit">Save</button>
                 </form>
 
                 <!--Email Form To Add New User-->
-                <form action="" id="new-contact-email-form" class="d-none">
+                <form th:action="@{/addNewContact}" id="new-contact-email-form" class="d-none" method="POST">
                     <div class="input-group mb-3 mt-5 container">
                             <span class="input-group-text border-0" id="basic-addon15" style="background-color: white !important;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" class="bi bi-person-fill" viewBox="0 0 16 16">
                                     <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
                                 </svg>
                             </span>
-                        <input type="text" class="form-control border-0 border-bottom rounded-0" placeholder="Full name" aria-label="fullname" aria-describedby="basic-addon15" style=" outline: none; box-shadow: none;">
+                        <input name="nickname" type="text" class="form-control border-0 border-bottom rounded-0" placeholder="Full name" aria-label="fullname" aria-describedby="basic-addon15" style=" outline: none; box-shadow: none;">
                     </div>
 
                     <div class="input-group mb-3 mt-5 container">
@@ -434,7 +435,7 @@
                                     <path d="M15.834 12.244c0 1.168-.577 2.025-1.587 2.025-.503 0-1.002-.228-1.12-.648h-.043c-.118.416-.543.643-1.015.643-.77 0-1.259-.542-1.259-1.434v-.529c0-.844.481-1.4 1.26-1.4.585 0 .87.333.953.63h.03v-.568h.905v2.19c0 .272.18.42.411.42.315 0 .639-.415.639-1.39v-.118c0-1.277-.95-2.326-2.484-2.326h-.04c-1.582 0-2.64 1.067-2.64 2.724v.157c0 1.867 1.237 2.654 2.57 2.654h.045c.507 0 .935-.07 1.18-.18v.731c-.219.1-.643.175-1.237.175h-.044C10.438 16 9 14.82 9 12.646v-.214C9 10.36 10.421 9 12.485 9h.035c2.12 0 3.314 1.43 3.314 3.034zm-4.04.21v.227c0 .586.227.8.581.8.31 0 .564-.17.564-.743v-.367c0-.516-.275-.708-.572-.708-.346 0-.573.245-.573.791"/>
                                 </svg>
                             </span>
-                        <input type="text" class="form-control border-0 border-bottom rounded-0" placeholder="Email address" aria-label="email" aria-describedby="basic-addon16" style=" outline: none; box-shadow: none;">
+                        <input name="username" type="text" class="form-control border-0 border-bottom rounded-0" placeholder="Email address" aria-label="email" aria-describedby="basic-addon16" style=" outline: none; box-shadow: none;">
                     </div>
 
                     <button class="w-20 btn btn-primary rounded-5 mt-5 mx-3" style="font-size: 1rem; background-color: #00A884; border-color: #00A884;" type="submit">Save</button>
@@ -471,17 +472,17 @@
 
                     <!-- Contacts Selection-->
                     <div class="list-group list-group-flush border-bottom scrollarea" style="height: 852px; overflow-y: auto; overflow-x: hidden;">
-                        <a href="#" class="list-group-item list-group-item-action py-3 lh-sm searched-user" aria-current="true" style="width: 30rem;">
+                        <a class="list-group-item list-group-item-action py-3 lh-sm searched-user" aria-current="true" style="width: 30rem;" th:each="contact : ${contacts}">
                             <div class="d-flex">
-                                <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
+                                <img th:src="@{${contact.contacting.profilePhotoPath} ?: '/assets/person-circle.svg'}"  alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
                                 <div style="width: 100%;">
                                     <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <strong class="mb-1 text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Emre Gokyar</strong>
+                                        <strong class="mb-1 text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" th:text="${contact.nickname} ?: 'Name'"></strong>
                                         <div class="form-check">
-                                            <input id="select-person-group" class="form-check-input rounded-circle custom-checkbox" type="checkbox" value="" style="width: 20px; height: 20px;">
+                                            <input th:id="'userId-' + ${contact.contacting.id}" class="form-check-input rounded-circle custom-checkbox user-selection" type="checkbox" th:value="${contact.contacting.id}" style="width: 20px; height: 20px;" >
                                         </div>
                                     </div>
-                                    <div class="small text-truncate" style="max-width: 22rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Some placeholder content in a paragraph below</div>
+                                    <div class="small text-truncate" style="max-width: 22rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" th:text="${contact.contacting.about} ?: 'Hello, I am using WhatsApp Clone!'"></div>
                                 </div>
                             </div>
                         </a>
@@ -511,14 +512,14 @@
 
                     <!-- Group Info -->
                     <div class="list-group list-group-flush scrollarea">
-                        <form action="" class=" mt-5 d-flex flex-column">
+                        <form th:action="@{/createGroup}" class=" mt-5 d-flex flex-column" method="POST" id="create-group-form">
 
                             <div class="d-flex justify-content-center mb-5" style="background-color: white;">
                                 <!-- Group Photo Container -->
                                 <div class="position-relative" style="width: 12rem; height: 12rem;">
-                                    <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="Profile Photo"
+                                    <img th:src="@{/assets/people-fill.svg}" alt=" Group Photo"
                                          id="group-photo"
-                                         class="rounded-circle"
+                                         class="rounded-circle border"
                                          style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
 
                                     <!-- Camera Icon -->
@@ -530,11 +531,11 @@
                                 </div>
 
                                 <!-- Hidden File Input -->
-                                <input type="file" id="groupPhotoInput" name="" accept="image/*" class="d-none">
+                                <input type="file" id="groupPhotoInput" name="groupPhoto" accept="image/*" class="d-none">
                             </div>
 
                             <div class="d-flex justify-content-center">
-                                <input type="text" class="form-control border-0 border-bottom rounded-0 pt-5" id="input-30" placeholder="Group subject" style=" outline: none; box-shadow: none; width: 25rem;">
+                                <input name="subject" type="text" class="form-control border-0 border-bottom rounded-0 pt-5" id="input-30" placeholder="Group subject" style=" outline: none; box-shadow: none; width: 25rem;" >
                             </div>
 
                             <div class=" d-flex justify-content-center pt-4 pb-4">

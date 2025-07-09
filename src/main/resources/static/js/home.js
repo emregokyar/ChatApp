@@ -173,6 +173,30 @@ document.getElementById("update-about-form").addEventListener("submit", function
     });
 });
 
+//Updating Privacy
+$("#privacy-checkbox").on("change", function () {
+    $("#change-privacy-submit-button").removeClass("d-none");
+})
+
+document.getElementById("change-privacy-form").addEventListener("submit", function (e) {
+    var isChecked = $("#privacy-checkbox").prop("checked");
+    e.preventDefault();
+
+    fetch('/changePrivacy', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            privacy: isChecked
+        })
+    });
+
+    $("#change-privacy-submit-button").addClass("d-none");
+});
+
+
+
 //Back to settings page from privacy settings
 let backSettingsButton= $("#back-settings-button");
 let privacySetting= $("#privacy-setting");
@@ -431,6 +455,7 @@ newContactBackButton.click(function () {
     addNewContactArea.addClass("d-none");
 });
 
+//Saving user with phone number
 const phoneInput = document.querySelector("#phone-input");
 let itiVal = window.intlTelInput(phoneInput, {
     initialCountry: "tr",
@@ -438,7 +463,22 @@ let itiVal = window.intlTelInput(phoneInput, {
     strictMode: true,
     loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js")
 });
-//userInfo.val(iti.getNumber());
+
+document.getElementById("new-contact-phone-form").addEventListener("submit", function (e) {
+    let name = $("#phone-nickname-input").val();
+    let num = itiVal.getNumber();
+
+    fetch('/addNewContact', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            nickname: name,
+            username: num
+        })
+    });
+});
 
 let switchButtonNewContact = $("#switch-button-new-contact");
 let newContactPhoneForm = $("#new-contact-phone-form");
@@ -498,4 +538,30 @@ let backMainButton = $("#back-main-button");
 backMainButton.click(function () {
     $("#new-chat-area").toggleClass("d-none");
     allUsers.toggleClass("d-none");
+});
+
+document.getElementById("create-group-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    let groupSubject = $("#input-30").val();
+    let groupPhotoInput = $("#groupPhotoInput")[0].files[0];
+    let listUserIds = [];
+
+    $(".user-selection").each(function () {
+        if ($(this).prop("checked")) {
+            listUserIds.push($(this).val());
+        }
+    });
+
+    const formData = new FormData();
+        formData.append("userIds", listUserIds);
+        formData.append("subject", groupSubject);
+        formData.append("groupPhoto", groupPhotoInput);
+
+    fetch('/createGroup', {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        window.location.href = "/home";
+    });
 });

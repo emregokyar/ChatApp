@@ -11,6 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
 public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

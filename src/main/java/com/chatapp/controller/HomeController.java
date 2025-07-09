@@ -1,9 +1,11 @@
 package com.chatapp.controller;
 
 import com.chatapp.dto.UserDto;
+import com.chatapp.entity.Contact;
 import com.chatapp.entity.Message;
 import com.chatapp.entity.RegisteredChannel;
 import com.chatapp.entity.User;
+import com.chatapp.service.ContactService;
 import com.chatapp.service.RegisteredChannelService;
 import com.chatapp.service.UserService;
 import com.chatapp.util.FileUploadUtil;
@@ -30,17 +32,23 @@ import java.util.Optional;
 public class HomeController {
     private final UserService userService;
     private final RegisteredChannelService registeredChannelService;
+    private final ContactService contactService;
 
     @Autowired
-    public HomeController(UserService userService, RegisteredChannelService registeredChannelService) {
+    public HomeController(UserService userService, RegisteredChannelService registeredChannelService, ContactService contactService) {
         this.userService = userService;
         this.registeredChannelService = registeredChannelService;
+        this.contactService = contactService;
     }
 
     @GetMapping("/home")
-    public String getHomePage(Model model) {
+    public String getHomePage(Model model, Principal principal) {
         User currentUser = userService.getCurrentUser();
+        if (!Objects.equals(currentUser.getUsername(), principal.getName())) return "redirect:/login";
         model.addAttribute("currentUser", currentUser);
+
+        Optional<List<Contact>> allContacts = contactService.getAllContacts(currentUser.getId());
+        allContacts.ifPresent(contacts -> model.addAttribute("contacts", contacts));
         return "home";
     }
 
@@ -118,10 +126,10 @@ public class HomeController {
 
 
     @PostMapping(value = "/changePrivacy", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> changePrivacy(@ModelAttribute("privacy") String privacy, Principal principal) {
+    public ResponseEntity<UserDto> changePrivacy(@ModelAttribute("privacy") Boolean checked, Principal principal) {
         User currentUser = userService.getCurrentUser();
         if (Objects.equals(currentUser.getUsername(), principal.getName())) {
-            currentUser.setIsPrivate(privacy != null);
+            currentUser.setIsPrivate(checked);
             User user = userService.updateUser(currentUser);
             return ResponseEntity.ok(
                     UserDto.builder().username(user.getUsername()).build()

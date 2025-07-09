@@ -24,8 +24,10 @@ CREATE TABLE login_tokens(
 );
 
 CREATE TABLE channels(
-	id INT UNIQUE PRIMARY KEY,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INT PRIMARY KEY AUTO_INCREMENT,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	group_photo VARCHAR(255) DEFAULT NULL,
+    subject VARCHAR(255) DEFAULT NULL
 );
 
 CREATE TABLE group_roles(
@@ -58,7 +60,7 @@ CREATE TABLE messages(
 CREATE TABLE contacts (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     contacter_id INT NOT NULL,
-    contacting_id INT NOT NULL,
+    contacting_id INT,
     nickname VARCHAR(255),
     CHECK (contacter_id != contacting_id),
     FOREIGN KEY (contacter_id) REFERENCES users(id) ON DELETE CASCADE,

@@ -21,4 +21,8 @@ public class RegisteredChannelService {
     public Optional<List<RegisteredChannel>> getRegisteredChannelsByIdDesc(User user) {
         return registeredChannelRepository.getRegisteredChannelsOrderByIdDesc(user.getId());
     }
+
+    public RegisteredChannel register(RegisteredChannel channel) {
+        return registeredChannelRepository.save(channel);
+    }
 }

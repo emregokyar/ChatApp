@@ -16,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class LoginToken implements OneTimeToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
