@@ -2,11 +2,8 @@ package com.chatapp.controller;
 
 import com.chatapp.dto.UserDto;
 import com.chatapp.entity.Contact;
-import com.chatapp.entity.Message;
-import com.chatapp.entity.RegisteredChannel;
 import com.chatapp.entity.User;
 import com.chatapp.service.ContactService;
-import com.chatapp.service.RegisteredChannelService;
 import com.chatapp.service.UserService;
 import com.chatapp.util.FileUploadUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +28,11 @@ import java.util.Optional;
 @Controller
 public class HomeController {
     private final UserService userService;
-    private final RegisteredChannelService registeredChannelService;
     private final ContactService contactService;
 
     @Autowired
-    public HomeController(UserService userService, RegisteredChannelService registeredChannelService, ContactService contactService) {
+    public HomeController(UserService userService, ContactService contactService) {
         this.userService = userService;
-        this.registeredChannelService = registeredChannelService;
         this.contactService = contactService;
     }
 
@@ -50,27 +45,6 @@ public class HomeController {
         Optional<List<Contact>> allContacts = contactService.getAllContacts(currentUser.getId());
         allContacts.ifPresent(contacts -> model.addAttribute("contacts", contacts));
         return "home";
-    }
-
-    @GetMapping("/getChannels")
-    public ResponseEntity<List<RegisteredChannel>> getMessagedPeople() {
-        User currentUser = userService.getCurrentUser();
-        Optional<List<RegisteredChannel>> registeredChannels = Optional.empty();
-        if (currentUser != null) {
-            registeredChannels = registeredChannelService.getRegisteredChannelsByIdDesc(currentUser);
-        }
-        return registeredChannels.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.ok(null));
-    }
-
-    //Continuous here
-    @GetMapping("/getMessages")
-    public ResponseEntity<Message> getMessagesBetweenUsers() {
-        User currentUser = userService.getCurrentUser();
-        List<RegisteredChannel> registeredChannels = currentUser.getRegisteredChannels();
-        for (RegisteredChannel channel : registeredChannels) {
-            List<Message> messages = channel.getChannel().getMessages();
-        }
-        return null;
     }
 
     @PostMapping(value = "/updateFullName", produces = MediaType.APPLICATION_JSON_VALUE)

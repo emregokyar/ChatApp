@@ -5,7 +5,6 @@ import com.chatapp.controller.HomeController;
 import com.chatapp.entity.Contact;
 import com.chatapp.entity.User;
 import com.chatapp.service.ContactService;
-import com.chatapp.service.RegisteredChannelService;
 import com.chatapp.service.SmsService;
 import com.chatapp.service.UserService;
 import com.chatapp.user_config.WithCustomMockUser;
@@ -43,9 +42,6 @@ import java.util.Optional;
 public class HomeControllerTests {
     @MockitoBean
     private UserService userServiceMock;
-
-    @MockitoBean
-    private RegisteredChannelService registeredChannelServiceMock;
 
     @MockitoBean
     private SmsService smsServiceMock;

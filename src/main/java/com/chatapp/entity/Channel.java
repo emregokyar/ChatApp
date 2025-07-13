@@ -1,5 +1,6 @@
 package com.chatapp.entity;
 
+import com.chatapp.util.ChannelType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
@@ -28,6 +29,9 @@ public class Channel {
     private String groupPhoto;
 
     private String subject;
+
+    @Enumerated(EnumType.STRING)
+    private ChannelType type;
 
     @OneToMany(targetEntity = RegisteredChannel.class, mappedBy = "channel", cascade = CascadeType.ALL)
     @JsonManagedReference

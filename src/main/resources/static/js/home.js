@@ -43,16 +43,6 @@ chatButton.click(function () {
     }
 });
 
-//Get single user
-singleUser.click(function () {
-    if (!infoPage.hasClass("d-none")) {
-       infoPage.addClass("d-none");
-    }
-    if (singleUserChat.hasClass("d-none")) {
-        singleUserChat.removeClass("d-none");
-    }
-});
-
 //Get settings
 settingsButton.click(function () {
     if (settingsArea.hasClass("d-none")) {

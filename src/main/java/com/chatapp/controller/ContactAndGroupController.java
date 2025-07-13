@@ -4,6 +4,7 @@ import com.chatapp.entity.Channel;
 import com.chatapp.entity.RegisteredChannel;
 import com.chatapp.entity.User;
 import com.chatapp.service.*;
+import com.chatapp.util.ChannelType;
 import com.chatapp.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,6 +60,7 @@ public class ContactAndGroupController {
         if (!Objects.equals(currentUser.getUsername(), principal.getName())) return "redirect:/login";
 
         Channel newChannel = Channel.builder()
+                .type(ChannelType.GROUP)
                 .subject(subject)
                 .build();
 

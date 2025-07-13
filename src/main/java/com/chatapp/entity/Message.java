@@ -15,6 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
+@Builder
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

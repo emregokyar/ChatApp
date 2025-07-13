@@ -19,5 +19,5 @@ public interface ContactRepository extends JpaRepository<Contact, Integer> {
             " FROM contacts cnt" +
             " WHERE cnt.contacter_id = :userId" +
             " AND cnt.contacting_id = :contactId", nativeQuery = true)
-    Optional<Contact> findContactIfExists(@Param("userId") Integer userId,  @Param("contactId") Integer contactId);
+    Optional<Contact> findContactIfExists(@Param("userId") Integer userId, @Param("contactId") Integer contactId);
 }

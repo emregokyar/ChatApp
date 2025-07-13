@@ -101,19 +101,8 @@
             </div>
 
             <!--Chatted People List-->
-            <div class="list-group list-group-flush border-bottom scrollarea" style="max-height: 55rem; overflow-y: auto; overflow-x: hidden;">
-                <a class="list-group-item list-group-item-action py-3 lh-sm single-user" aria-current="true" style="width: 30rem;">
-                    <div class="d-flex">
-                        <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
-                        <div style="width: 100%;">
-                            <div class="d-flex w-100 align-items-center justify-content-between">
-                                <strong class="mb-1 text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Emre Gokyar</strong>
-                                <small>Wed</small>
-                            </div>
-                            <div class="small text-truncate" style="max-width: 22rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Some placeholder content in a paragraph below</div>
-                        </div>
-                    </div>
-                </a>
+            <div class="list-group list-group-flush border-bottom scrollarea" style="max-height: 55rem; overflow-y: auto; overflow-x: hidden;" id="channels">
+             <!--LIST OF CHANNELS-->
             </div>
         </div>
 
@@ -570,10 +559,10 @@
         <div id="user-chat" class="col-9 z-1 mt-3 d-flex flex-column d-none" style="background-color: #F0F2F5;">
             <!--User Info-->
             <div class="d-flex mx-4 mt-3 pb-2 border-bottom">
-                <img th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="height: 40px; width: 40px; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
+                <img alt="" style="height: 40px; width: 40px; margin-right: 1rem; object-fit: cover;" class="rounded-circle" id="chat-display-photo">
                 <div style="width: 100%;">
                     <div class="d-flex w-100 align-items-center justify-content-between">
-                        <h6 class="text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Emre Gokyar</h6>
+                        <h6 class="text-truncate" style="max-width: 15rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" id="chat-display-name"></h6>
                         <!--Regular Call and Video Call Buttons-->
                         <div class="mb-3">
                             <a href="" class="m-3">
@@ -719,6 +708,7 @@
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/js/message.js}"></script>
     <script th:src="@{/js/home.js}"></script>
 </body>
 </html>

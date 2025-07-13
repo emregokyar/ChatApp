@@ -27,7 +27,8 @@ CREATE TABLE channels(
     id INT PRIMARY KEY AUTO_INCREMENT,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	group_photo VARCHAR(255) DEFAULT NULL,
-    subject VARCHAR(255) DEFAULT NULL
+    subject VARCHAR(255) DEFAULT NULL,
+    type ENUM('GROUP', 'PRIVATE') NOT NULL
 );
 
 CREATE TABLE group_roles(
@@ -35,7 +36,6 @@ CREATE TABLE group_roles(
     role ENUM('ADMIN', 'REGULAR') NOT NULL UNIQUE
 );
 
--- Give a role to user in the registered channel
 CREATE TABLE registered_channels(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	user_id INT NOT NULL,

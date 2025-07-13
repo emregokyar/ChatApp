@@ -3,6 +3,7 @@ package com.chatapp.service;
 import com.chatapp.entity.User;
 import com.chatapp.repository.UserRepository;
 import com.chatapp.util.LoginOptions;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,10 +12,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final OttExtrasService ottExtrasService;
@@ -78,5 +81,13 @@ public class UserService {
 
     public Optional<User> findByUserId(Integer userId) {
         return userRepository.findById(userId);
+    }
+
+    public Optional<List<User>> getChannelGroupMembers(Integer userId, Integer channelId) {
+        return userRepository.getGroupMembers(userId, channelId);
+    }
+
+    public Optional<User> getChannelUser(Integer userId, Integer channelId) {
+        return userRepository.getSingleUser(userId, channelId);
     }
 }
