@@ -43,4 +43,16 @@ public class MessageService {
         }
         return date;
     }
+
+    public Message createNewMessage(Message newMessage) {
+        return messageRepository.save(newMessage);
+    }
+
+    public Optional<Message> findById(Integer messageId) {
+        return messageRepository.findById(messageId);
+    }
+
+    public Optional<Message> findLastMessageSentChannelByUserID(Integer channelId, Integer userId) {
+        return messageRepository.getLastMessageFromPersonThatSentIntoChannel(channelId, userId);
+    }
 }

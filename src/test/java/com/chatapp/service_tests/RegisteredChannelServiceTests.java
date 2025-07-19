@@ -41,7 +41,7 @@ public class RegisteredChannelServiceTests {
         List<RegisteredChannel> registeredChannels = List.of(registeredChannel1, registeredChannel2, registeredChannel3);
 
         user.setRegisteredChannels(registeredChannels);
-        Mockito.when(registeredChannelRepositoryMock.getRegisteredChannelsOrderByIdDesc(user.getId()))
+        Mockito.when(registeredChannelRepositoryMock.getRegisteredChannelsOrderByUpdateDateDesc(user.getId()))
                 .thenReturn(Optional.of(registeredChannels));
         Assertions.assertNotNull(registeredChannelService.getRegisteredChannelsByIdDesc(user));
         Assertions.assertEquals(registeredChannelService.getRegisteredChannelsByIdDesc(user).get(), registeredChannels);

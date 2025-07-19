@@ -19,7 +19,7 @@ public class RegisteredChannelService {
     }
 
     public Optional<List<RegisteredChannel>> getRegisteredChannelsByIdDesc(User user) {
-        return registeredChannelRepository.getRegisteredChannelsOrderByIdDesc(user.getId());
+        return registeredChannelRepository.getRegisteredChannelsOrderByUpdateDateDesc(user.getId());
     }
 
     public RegisteredChannel register(RegisteredChannel channel) {

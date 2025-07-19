@@ -11,6 +11,8 @@
 </head>
 
 <body style="height: 100vh; overflow: hidden;">
+
+<input type="hidden" id="current-user-id" th:value="${currentUser.id}">
     <div class="p-5 z-0" id="upper-part" style="width: 100vw; overflow: hidden;"></div>
 
     <div id="cover" class="border px-5 mx-5 d-flex z-1" style="width: 83dvw;">
@@ -353,10 +355,9 @@
                 </div>
 
                 <!-- All the Contacts that user has -->
-                <div class="list-group list-group-flush border-bottom scrollarea" style="max-height: 660px; overflow-y: auto; overflow-x: hidden;">
-                    <a class="list-group-item list-group-item-action py-3 lh-sm searched-user" aria-current="true" style="width: 30rem;" th:each="contact : ${contacts}">
+                <div class="list-group list-group-flush border-bottom scrollarea" style="max-height: 660px; overflow-y: auto; overflow-x: hidden;" id="contactList">
+                    <a class="list-group-item list-group-item-action py-3 lh-sm searched-user contact-list" aria-current="true" style="width: 30rem;" th:each="contact : ${contacts}" th:id="'contactId-' + ${contact.contacting.id}">
                         <div class="d-flex">
-                            <!--th:id="'userId-' + ${contact.contacting.id}"-->
                             <img th:src="@{${contact.contacting.profilePhotoPath} ?: '/assets/person-circle.svg'}" alt="" style="height: 3rem; width: 3rem; margin-right: 1rem; object-fit: cover;" class="rounded-circle">
                             <div style="width: 100%;">
                                 <div class="d-flex w-100 align-items-center justify-content-between">
@@ -585,41 +586,7 @@
             <div id="chat-area" class="col-12 d-flex flex-column bg-body-tertiary justify-content-between">
                 <!--Messages-->
                 <div class="border-bottom chat-area" style="height: 100vh; overflow-y: scroll;">
-                    <!--Received Messages With and Without Photo-->
-                    <div class="chat-message receiver">
-                        <div class="message mx-4 mt-2">
-                            <img class="rounded-3" th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="width: 20rem; height: 20rem; object-fit: cover;">
-                            <p style="margin-bottom: -5px;">How's it going? </p>
-                            <div class=" d-flex justify-content-end">
-                                <small style="color: grey; font-size: 12px;">10:02 AM</small>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="chat-message receiver">
-                        <div class="message mx-4 mt-2">
-                            <p style="margin-bottom: -5px;">How's it going? </p>
-                            <div class=" d-flex justify-content-end">
-                                <small style="color: grey; font-size: 12px;">10:02 AM</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--Sent Messages-->
-                    <div class="chat-message sender mx-4 mt-2">
-                        <div class="message ">
-                            <p style="margin-bottom: -10px;">All good! Just working on a project. 😊</p>
-                            <small style="color: grey; font-size: 12px;">10:02 AM</small>
-                        </div>
-                    </div>
-
-                    <div class="chat-message sender mx-4 mt-2">
-                        <div class="message ">
-                            <img class="rounded-3" th:src="@{/assets/pexels-ron-lach-9212887.jpg}" alt="" style="width: 20rem; height: 20rem; object-fit: cover;">
-                            <p style="margin-bottom: -10px;">All good! Just working on a project. 😊</p>
-                            <small style="color: grey; font-size: 12px;">10:02 AM</small>
-                        </div>
-                    </div>
                 </div>
 
                 <!--New Message Area-->
@@ -640,7 +607,7 @@
                                         <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
                                     </svg>
                                 </label>
-                                <input type="file" name="file" id="other-inputs" class="d-none form-control mx-0 rounded-3" style="width: 875px; margin-bottom: 0px !important; ">
+                                <input type="file" name="file" id="other-inputs" class="d-none form-control mx-0 rounded-3" style="width: 875px; margin-bottom: 0px !important;">
                                 <button type="submit" class="d-none btn border-0" id="file-submit-button" style="margin-bottom: 0px !important; padding-bottom: opx !important; padding-right: 0px !important; margin-right: 0px !important;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="grey" class="bi bi-send-fill " viewBox="0 0 16 16" style="margin-left: 1rem;">
                                         <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
@@ -650,7 +617,7 @@
                         </form>
 
 
-                        <form action="" class=" mt-2">
+                        <form action="" class=" mt-2" id="send-text-message-form">
                             <!--Text Input-->
                             <input id="message-input" type="text" class="form-control border-0 rounded-3" placeholder="Type a message" style="outline: none; box-shadow: none; width: 56rem;">
                         </form>
@@ -670,8 +637,8 @@
                                     </svg>
                                 </button>
 
-                            <!--Audio Input-->
-                                <form action="" class="d-flex" style="padding: 0px !important; margin: 0px !important;">
+                                <!--Audio Input-->
+                                <form action="" class="d-flex" style="padding: 0px !important; margin: 0px !important;" id="audio-input-form">
                                     <!--Playback-->
                                     <div class="d-none" id="send-container">
                                         <audio src="" id="audio-playback" style="display: none;"></audio>
@@ -680,11 +647,7 @@
                                                 <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
                                             </svg>
                                         </a>
-
-                                        <!--
-                                        <input type="submit">
-                                        -->
-                                        <a href="" download="" id="send-button" class="btn border-0">
+                                        <a href="" id="send-button" class="btn border-0" type="submit">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="grey" class="bi bi-send-fill" viewBox="0 0 16 16">
                                                 <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
                                             </svg>

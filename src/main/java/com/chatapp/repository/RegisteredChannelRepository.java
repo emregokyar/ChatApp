@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RegisteredChannelRepository extends JpaRepository<RegisteredChannel, Integer> {
-    @Query(value = "SELECT DISTINCT cnl.*" +
-            " FROM registered_channels cnl" +
-            " JOIN users usr ON usr.id = cnl.user_id" +
-            " WHERE cnl.user_id = :userId" +
-            " ORDER BY cnl.user_id DESC", nativeQuery = true)
-    Optional<List<RegisteredChannel>> getRegisteredChannelsOrderByIdDesc(@Param("userId") Integer userId);
+    @Query(value = "SELECT rgstrcnl.*" +
+            " FROM registered_channels rgstrcnl" +
+            " JOIN users usr ON usr.id = rgstrcnl.user_id" +
+            " JOIN channels cnl ON rgstrcnl.channel_id = cnl.id " +
+            " WHERE rgstrcnl.user_id = :userId" +
+            " ORDER BY cnl.updated_at DESC", nativeQuery = true)
+    Optional<List<RegisteredChannel>> getRegisteredChannelsOrderByUpdateDateDesc(@Param("userId") Integer userId);
 }

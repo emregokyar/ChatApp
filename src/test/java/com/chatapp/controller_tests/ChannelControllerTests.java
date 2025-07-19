@@ -50,6 +50,9 @@ public class ChannelControllerTests {
     private ChannelService channelServiceMock;
 
     @MockitoBean
+    private GroupRoleService groupRoleService;
+
+    @MockitoBean
     private SmsService smsServiceMock;
 
     @Autowired
@@ -61,6 +64,11 @@ public class ChannelControllerTests {
     private static User mockUser;
 
     private static Channel mockChannel;
+
+    private static Channel mockPrivateChannel;
+
+    private static User testUser;
+
 
     @BeforeAll
     static void setUp() {
@@ -75,12 +83,30 @@ public class ChannelControllerTests {
                 .isActive(true)
                 .build();
 
+        testUser = User.builder()
+                .id(2)
+                .username("test@gmail.com")
+                .fullName("Test User")
+                .registrationType(LoginOptions.EMAIL)
+                .activationNumber(null)
+                .profilePhoto("test.jpg")
+                .about("WhatsApp Clone Tests")
+                .isActive(true)
+                .build();
+
         mockChannel = Channel.builder()
                 .type(ChannelType.GROUP)
                 .id(1)
                 .groupPhoto("test.jpg")
                 .messages(List.of())
                 .subject("dummy sub")
+                .updatedAt(new Date(System.currentTimeMillis()))
+                .build();
+
+        mockPrivateChannel = Channel.builder()
+                .type(ChannelType.PRIVATE)
+                .id(2)
+                .messages(List.of())
                 .updatedAt(new Date(System.currentTimeMillis()))
                 .build();
     }
@@ -182,6 +208,84 @@ public class ChannelControllerTests {
     void failTestRetrievingSingleChannel() throws Exception {
         Mockito.when(userServiceMock.getCurrentUser()).thenReturn(null);
         mockMvc.perform(MockMvcRequestBuilders.get("/getChannelInfo/1"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @WithCustomMockUser
+    void successTestRetrievingChannelBetweenUsers() throws Exception {
+        Mockito.when(userServiceMock.getCurrentUser())
+                .thenReturn(mockUser);
+
+        Mockito.when(channelServiceMock.getChannelInContacts(mockUser.getId(), testUser.getId()))
+                .thenReturn(Optional.of(mockPrivateChannel));
+
+        Mockito.when(userServiceMock.getChannelUser(mockUser.getId(), mockPrivateChannel.getId()))
+                .thenReturn(Optional.of(testUser));
+
+        Mockito.when(contactServiceMock.getContact(mockUser.getId(), testUser.getId()))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/getPrivateChannel/2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.channelId", Matchers.is(2)));
+    }
+
+    @Test
+    @WithCustomMockUser
+    void failTestRetrievingChannelBetweenUsers() throws Exception {
+        Mockito.when(userServiceMock.getCurrentUser())
+                .thenReturn(mockUser);
+
+        Mockito.when(channelServiceMock.getChannelInContacts(mockUser.getId(), testUser.getId()))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/getPrivateChannel/2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("")); //Will Return null
+    }
+
+    @Test
+    @WithCustomMockUser
+    void asuccessTestCreatingNewPrivateChannel() throws Exception {
+        Mockito.when(userServiceMock.getCurrentUser()).thenReturn(mockUser);
+        Mockito.when(userServiceMock.findByUserId(testUser.getId())).thenReturn(Optional.of(testUser));
+        Mockito.when(channelServiceMock.getChannelInContacts(mockUser.getId(), testUser.getId()))
+                .thenReturn(Optional.empty());
+        Mockito.when(channelServiceMock.createChannel(Mockito.any(Channel.class))).thenReturn(mockPrivateChannel);
+        Mockito.when(groupRoleService.getRegularRole()).thenReturn(
+                GroupRole.builder().role(Roles.REGULAR).build()
+        );
+
+        Mockito.when(userServiceMock.getChannelUser(mockUser.getId(), mockPrivateChannel.getId())).thenReturn(Optional.of(testUser));
+        Mockito.when(contactServiceMock.getContact(mockUser.getId(), testUser.getId())).thenReturn(Optional.empty());
+        Mockito.when(channelServiceMock.getLastUpdatedAsString(mockPrivateChannel)).thenReturn("Just now");
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/createNewPrivateChannel/" + testUser.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.channelId", Matchers.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.channelType", Matchers.is("PRIVATE")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.channelName", Matchers.is(testUser.getUsername())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.photoDir", Matchers.is(testUser.getProfilePhotoPath())));
+
+        Mockito.verify(registeredChannelServiceMock, Mockito.times(2)).register(Mockito.any());
+    }
+
+    @Test
+    @WithCustomMockUser
+    void failTestCreatingNewPrivateChannel() throws Exception {
+        Mockito.when(userServiceMock.getCurrentUser())
+                .thenReturn(mockUser);
+
+        Mockito.when(userServiceMock.findByUserId(testUser.getId()))
+                .thenReturn(Optional.of(testUser));
+
+        Mockito.when(channelServiceMock.getChannelInContacts(mockUser.getId(), testUser.getId()))
+                .thenReturn(Optional.of(mockPrivateChannel));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/createNewPrivateChannel/2"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

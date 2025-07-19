@@ -12,4 +12,6 @@ public class MessageDto {
     private String date;
     private String messageType;
     private String resourceDir;
+    private Integer channelId;
+    private Integer[] receivers;
 }

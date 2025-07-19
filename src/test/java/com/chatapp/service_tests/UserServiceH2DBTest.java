@@ -68,4 +68,13 @@ public class UserServiceH2DBTest {
         Optional<User> channelUser = userService.getChannelUser(2, 1);
         Assertions.assertTrue(channelUser.isEmpty());
     }
+
+    @Test
+    @Sql(scripts = "classpath:insert_dummy_data.sql")
+    @Sql(scripts = "classpath:delete_dummy_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void successTestRetrievingUsersInChannel() {
+        Optional<List<User>> usersInChannel = userService.getUsersInChannel(2, 1);
+        Assertions.assertTrue(usersInChannel.isPresent());
+        Assertions.assertEquals(1, usersInChannel.get().size());
+    }
 }

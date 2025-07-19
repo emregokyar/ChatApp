@@ -20,12 +20,12 @@ public class Contact {
     @ManyToOne
     @JoinColumn(name = "contacter_id", referencedColumnName = "id")
     @JsonBackReference
-     private User contacter;
+    private User contacter;
 
     @ManyToOne
     @JoinColumn(name = "contacting_id", referencedColumnName = "id")
     @JsonBackReference
-     private User contacting;
+    private User contacting;
 
-     private String nickname;
+    private String nickname;
 }

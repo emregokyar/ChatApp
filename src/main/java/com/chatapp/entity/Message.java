@@ -3,6 +3,7 @@ package com.chatapp.entity;
 import com.chatapp.util.MessageType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -38,4 +39,10 @@ public class Message {
     @JoinColumn(name = "channel_id", referencedColumnName = "id")
     @JsonBackReference
     private Channel channel;
+
+    @Transactional
+    public String getFilePath() {
+        if (type == MessageType.TEXT) return null;
+        return "/files/channels/" + channel.getId() + "/" + id + "/" + content;
+    }
 }

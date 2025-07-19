@@ -52,3 +52,8 @@ body{
     box-shadow: none;
     border-color: #00A884;
 }
+
+audio::-webkit-media-controls-enclosure {
+    background-color: transparent !important;
+    border: none !important;
+}

@@ -28,4 +28,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             " AND rgstr.user_id != :userId" +
             " AND cnl.type = 'PRIVATE'", nativeQuery = true)
     Optional<User> getSingleUser(@Param("userId") Integer userId, @Param("channelId") Integer channelId);
+
+    @Query(value = "SELECT DISTINCT usr.*" +
+            " FROM users usr" +
+            " JOIN registered_channels rgstr ON rgstr.user_id = usr.id" +
+            " JOIN channels cnl ON rgstr.channel_id = cnl.id" +
+            " WHERE cnl.id = :channelId" +
+            " AND usr.id != :userId", nativeQuery = true)
+    Optional<List<User>> getUsersInChannel(@Param("userId") Integer userId, @Param("channelId") Integer channelId);
 }

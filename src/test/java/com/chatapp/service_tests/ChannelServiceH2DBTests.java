@@ -15,6 +15,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Optional;
+
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -36,5 +38,14 @@ public class ChannelServiceH2DBTests {
         Channel channelById = channelService.getChannelById(1);
         Assertions.assertNotNull(channelById);
         Assertions.assertEquals("Weekend Plans", channelById.getSubject());
+    }
+
+    @Test
+    @Sql(scripts = "classpath:insert_dummy_data.sql")
+    @Sql(scripts = "classpath:delete_dummy_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void successTestRetrievingChannelInContacts() {
+        Optional<Channel> channel = channelService.getChannelInContacts(2, 4);
+        Assertions.assertTrue(channel.isPresent());
+        Assertions.assertNotNull(channel.get());
     }
 }

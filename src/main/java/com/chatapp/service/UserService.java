@@ -90,4 +90,8 @@ public class UserService {
     public Optional<User> getChannelUser(Integer userId, Integer channelId) {
         return userRepository.getSingleUser(userId, channelId);
     }
+
+    public Optional<List<User>> getUsersInChannel(Integer userId, Integer channelId) {
+        return userRepository.getUsersInChannel(userId, channelId);
+    }
 }

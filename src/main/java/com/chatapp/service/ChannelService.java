@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ChannelService {
@@ -22,6 +24,11 @@ public class ChannelService {
     public Channel createChannel(Channel channel) {
         channel.setUpdatedAt(new Date(System.currentTimeMillis()));
         return channelRepository.save(channel);
+    }
+
+    public void updateChannel(Channel channel) {
+        channel.setUpdatedAt(new Date(System.currentTimeMillis()));
+        channelRepository.save(channel);
     }
 
     public String getLastUpdatedAsString(Channel channel) {
@@ -51,5 +58,10 @@ public class ChannelService {
     public Channel getChannelById(int channelId) {
         return channelRepository.findById(channelId).orElseThrow(() ->
                 new RuntimeException("Can not find a channel associated with this id: " + channelId));
+    }
+
+    public Optional<Channel> getChannelInContacts(Integer currentUserId, Integer contactId) {
+        if (Objects.equals(currentUserId, contactId)) return Optional.empty();
+        return channelRepository.findByContacterAndContacting(currentUserId, contactId);
     }
 }

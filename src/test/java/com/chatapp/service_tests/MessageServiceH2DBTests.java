@@ -48,4 +48,13 @@ public class MessageServiceH2DBTests {
         Assertions.assertTrue(messages.isPresent());
         Assertions.assertEquals(0, messages.get().size());
     }
+
+    @Test
+    @Sql(scripts = "classpath:insert_dummy_data.sql")
+    @Sql(scripts = "classpath:delete_dummy_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void successTestFindLastMessageSentChannelByUserID() {
+        Optional<Message> message = messageService.findLastMessageSentChannelByUserID(2, 4);
+        Assertions.assertTrue(message.isPresent());
+        Assertions.assertEquals(5, message.get().getId());
+    }
 }

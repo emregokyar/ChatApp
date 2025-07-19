@@ -234,7 +234,8 @@ backSettings2.click(function () {
     }
 });
 
-/// MESSAGE AND INPUT SETTINGS
+
+  /* Section Messaging */
  // audio recorder
 let recorder, audio_stream;
 const recordButton = document.getElementById("record-button");
@@ -250,25 +251,23 @@ const preview = document.getElementById("audio-playback");
 
 // set send button event
 const sendAudio = document.getElementById("send-button");
-sendAudio.addEventListener("click", sendRecording);
+sendAudio.addEventListener("click", writeNewMessage);
 
 let writeMessageButton = $("#write-message-button");
 let otherInputButton= $("#other-inputs-button");
-let recordButtonJquery = $("#record-button")
-let stopButtonJquery = $("#stop-button");
-let audioPlayBackJquery = $("#audio-playback");
+window.sharedAudio = window.sharedAudio || {};
 
 function startRecording() {
     // button settings
     recordButton.disabled = true;
-    recordButtonJquery.fadeIn();
+    $("#record-button").fadeIn();
 
-    stopButtonJquery.removeClass("d-none");
-    stopButtonJquery.removeClass("inactive");
+    $("#stop-button").removeClass("d-none");
+    $("#stop-button").removeClass("inactive");
     stopButton.disabled = false;
 
-    if (!audioPlayBackJquery.hasClass("d-none")) {
-        audioPlayBackJquery.addClass("d-none");
+    if (!$("#audio-playback").hasClass("d-none")) {
+        $("#audio-playback").addClass("d-none");
     };
 
     if (!$("#send-container").hasClass("d-none")) {
@@ -294,23 +293,29 @@ function startRecording() {
 
             // when there is data, compile into object for preview src
             recorder.ondataavailable = function (e) {
+                const blob = e.data;
+                const fileName = createRandomString(8) + '.wav';
+                const audioFile = new File([blob], fileName, { type: 'audio/wav' });
+                window.sharedAudio.file = audioFile;
+
+                //Creating a preview
                 const url = URL.createObjectURL(e.data);
                 preview.src = url;
-
-                // set link href as blob url, replaced instantly if re-recorded
-                sendAudio.href = url;
             };
             recorder.start();
-
-            /*
-            timeout_status = setTimeout(function () {
-                console.log("5 min timeout");
-                stopRecording();
-            }, 300000);
-            */
         }
     );
 }
+
+function createRandomString(length) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 
 function stopRecording() {
     recorder.stop();
@@ -319,41 +324,35 @@ function stopRecording() {
     // buttons reset
     recordButton.disabled = false;
 
-    if (!stopButtonJquery.hasClass("inactive")) {
-        stopButtonJquery.addClass("inactive");
+    if (!$("#stop-button").hasClass("inactive")) {
+        $("#stop-button").addClass("inactive");
     }
 
-    if (!stopButtonJquery.hasClass("d-none")) {
-        stopButtonJquery.addClass("d-none");
+    if (!$("#stop-button").hasClass("d-none")) {
+        $("#stop-button").addClass("d-none");
     }
     stopButton.disabled = true;
 
-    audioPlayBackJquery.removeClass("d-none");
-    audioPlayBackJquery.removeClass("d-none");
+    $("#audio-playback").removeClass("d-none");
+    $("#send-container").removeClass("d-none");
 }
 
-//Sending the record from here currently it downloads the audio
-function sendRecording(){
-    var name = new Date();
-    var res = name.toISOString().slice(0,10);
-    sendAudio.download = res + '.wav';
-    writeNewMessage();
-}
-writeMessageButton.click(writeNewMessage)
 
-function writeNewMessage() {
-    sendAudio.href = "";
+writeMessageButton.click(writeNewMessage);
+function writeNewMessage(event) {
+    event.preventDefault();
+    //sendAudio.href = "";
     recorder.stop();
     audio_stream.getAudioTracks()[0].stop();
 
-    if (!stopButtonJquery.hasClass("inactive")) {
-        stopButtonJquery.addClass("inactive");
+    if (!$("#stop-button").hasClass("inactive")) {
+        $("#stop-button").addClass("inactive");
     }
-    if (!stopButtonJquery.hasClass("d-none")) {
-        stopButtonJquery.addClass("d-none");
+    if (!$("#stop-button").hasClass("d-none")) {
+        $("#stop-button").addClass("d-none");
     }
-    if (!audioPlayBackJquery.hasClass("d-none")) {
-        audioPlayBackJquery.addClass("d-none");
+    if (!$("#audio-playback").hasClass("d-none")) {
+        $("#audio-playback").addClass("d-none");
     }
     if (!$("#send-container").hasClass("d-none")) {
         $("#send-container").addClass("d-none");
@@ -378,7 +377,7 @@ otherInput.on( "change", function() {
     otherInput.removeClass("d-none");
     otherUnputSubmitButton.removeClass("d-none");
     $("#message-input").addClass("d-none");
-    recordButtonJquery.addClass("d-none");
+    $("#record-button").addClass("d-none");
     $("#other-inputs-button").addClass("d-none");
     $("#back-button").removeClass("d-none");
 } );
@@ -387,13 +386,12 @@ function backNormal() {
     otherInput.addClass("d-none");
     otherUnputSubmitButton.addClass("d-none");
     $("#message-input").removeClass("d-none");
-    recordButtonJquery.removeClass("d-none");
+    $("#record-button").removeClass("d-none");
     $("#other-inputs-button").removeClass("d-none");
     $("#back-button").addClass("d-none");
     otherInput.val("");
 }
 $("#back-button").click(backNormal);
-
 
 $("#custom-play-button").click(function () {
     const audio = document.getElementById("audio-playback");
@@ -424,7 +422,6 @@ $("#custom-play-button").click(function () {
         `);
     });
 });
-
 
 
 ///FUNCTIONS FOR CREATING NEW GROUP AND ADDING NEW USER
