@@ -66,3 +66,12 @@ CREATE TABLE contacts (
     FOREIGN KEY (contacter_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (contacting_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE calls (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	caller_id INT NOT NULL,
+    channel_id INT NOT NULL,
+    type ENUM('VIDEO', 'VOICE') NOT NULL DEFAULT 'VIDEO',
+    FOREIGN KEY(caller_id) REFERENCES users(id),
+	FOREIGN KEY(channel_id) REFERENCES channels(id)
+);

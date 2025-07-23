@@ -41,6 +41,10 @@ public class Channel {
     @JsonManagedReference
     private List<Message> messages;
 
+    @OneToMany(targetEntity = Call.class, mappedBy = "channel", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @JsonManagedReference
+    private List<Call> calls;
+
     @Transactional
     public String getGroupPhotoPath() {
         if (groupPhoto == null) return null;

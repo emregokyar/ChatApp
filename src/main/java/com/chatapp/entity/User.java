@@ -57,6 +57,10 @@ public class User {
     @JsonManagedReference
     private List<Message> messages;
 
+    @OneToMany(targetEntity = Call.class, mappedBy = "caller", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Call> calls;
+
     @Transactional
     public String getProfilePhotoPath() {
         if (profilePhoto == null) return null;

@@ -42,6 +42,8 @@ async function findAndDisplayConnectedUsers() {
 $("#channels").on("click", ".single-user", async function () {
     toggleChatVisibility();
     channelIdentificationNumber = $(this).attr('id').split('-')[1];
+    $("#current-channel-id").val(channelIdentificationNumber);
+
     channelTypeDisplay = $(this).attr('id').split('-')[0];
     receiverIds = await getArrayOfChannelAsync(channelIdentificationNumber);
     fetchAndDisplayUserChat();
@@ -196,6 +198,7 @@ async function handleContactClick() {
         const channel = await response.json();
 
         channelIdentificationNumber = channel.channelId;
+        $("#current-channel-id").val(channelIdentificationNumber);
         receiverIds = await getArrayOfChannelAsync(channel.channelId);
 
         $("#chat-display-photo").attr("src", channel.photoDir || "/assets/person-circle.svg");
@@ -214,6 +217,7 @@ async function handleContactClick() {
 
         receiverIds = [user.userId];
         channelIdentificationNumber = '';
+        $("#current-channel-id").val(channelIdentificationNumber);
     }
     scrollToBottom();
 }
@@ -228,6 +232,7 @@ async function getArrayOfChannelAsync(channelId) {
 $(function () {
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
+    window.stompClient = stompClient;
     stompClient.connect({}, onConnected, onError);
 });
 
@@ -263,6 +268,10 @@ function onConnected() {
 
         await findAndDisplayConnectedUsers();
         scrollToBottom();
+    });
+
+    stompClient.subscribe(`/user/${currentUserId}/calls`, function(call) {
+        window.onCallReceived(call);
     });
 }
 
@@ -304,6 +313,7 @@ async function sendMessage(event, type) {
     // Await the new channel creation
     if (channelIdentificationNumber === '') {
         channelIdentificationNumber = await createNewChannelAndGetId();
+        $("#current-channel-id").val(channelIdentificationNumber);
     }
 
     if(type === 'TEXT'){
